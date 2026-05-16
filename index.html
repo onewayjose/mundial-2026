@@ -42,6 +42,38 @@
       text-transform: uppercase;
       letter-spacing: .05em;
     }
+    /* Bracket árbol horizontal */
+    .bracket-cell { align-self: center; position: relative; }
+    .bracket-cell .match-card { width: 100%; }
+    .round-head {
+      text-align: left;
+      padding: 8px 4px 10px;
+      border-bottom: 1px solid rgb(30 41 59);
+    }
+    /* Línea horizontal saliendo a la derecha de cada partido que tiene siguiente ronda */
+    .bracket-cell.has-next .match-card::after {
+      content: '';
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      width: 16px;
+      height: 2px;
+      background: rgb(51 65 85);
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+    /* Línea vertical entre el par que alimenta el siguiente partido */
+    .bracket-cell.pair-top .match-card::before {
+      content: '';
+      position: absolute;
+      left: calc(100% + 16px);
+      top: 50%;
+      width: 2px;
+      height: var(--connector-h, 104px);
+      background: rgb(51 65 85);
+      pointer-events: none;
+    }
+    .bracket-cell .match-card { transition: border-color .15s ease; }
   </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen">
@@ -77,39 +109,23 @@
     <!-- Bracket -->
     <section>
       <h2 class="text-xl font-bold mb-1">Eliminatorias</h2>
-      <p class="text-xs text-slate-400 mb-4">Los partidos con un slot de 3.° de grupo tienen un selector — elige cuál tercero clasifica a esa llave. No repitas el mismo grupo en dos slots.</p>
+      <p class="text-xs text-slate-400 mb-4">Los partidos con un slot de 3.° de grupo tienen un selector — elige cuál tercero clasifica a esa llave. No repitas el mismo grupo en dos slots. <span class="text-slate-500">Desliza horizontalmente si no ves todo el bracket.</span></p>
 
-      <div class="space-y-8">
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Dieciseisavos de final · <span class="text-slate-500 font-normal">28 jun – 3 jul</span></h3>
-          <div id="r32Grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+      <div class="overflow-x-auto pb-4 -mx-4 px-4">
+        <div class="bracket-headers grid gap-x-4 mb-2" style="grid-template-columns: repeat(5, minmax(220px, 1fr)); min-width: 1180px;">
+          <div class="round-head"><div class="text-sm font-semibold uppercase tracking-wider text-sky-300">Dieciseisavos</div><div class="text-[10px] text-slate-500">28 jun – 3 jul · 16 partidos</div></div>
+          <div class="round-head"><div class="text-sm font-semibold uppercase tracking-wider text-indigo-300">Octavos</div><div class="text-[10px] text-slate-500">4 – 7 jul · 8 partidos</div></div>
+          <div class="round-head"><div class="text-sm font-semibold uppercase tracking-wider text-violet-300">Cuartos</div><div class="text-[10px] text-slate-500">9 – 11 jul · 4 partidos</div></div>
+          <div class="round-head"><div class="text-sm font-semibold uppercase tracking-wider text-fuchsia-300">Semis</div><div class="text-[10px] text-slate-500">14 – 15 jul · 2 partidos</div></div>
+          <div class="round-head"><div class="text-sm font-semibold uppercase tracking-wider text-amber-300">Final</div><div class="text-[10px] text-amber-200/60">19 jul · MetLife Stadium</div></div>
         </div>
 
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Octavos de final · <span class="text-slate-500 font-normal">4 – 7 jul</span></h3>
-          <div id="r16Grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-        </div>
+        <div id="bracketGrid" class="grid gap-x-4" style="grid-template-columns: repeat(5, minmax(220px, 1fr)); grid-template-rows: repeat(32, 52px); min-width: 1180px;"></div>
+      </div>
 
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Cuartos de final · <span class="text-slate-500 font-normal">9 – 11 jul</span></h3>
-          <div id="qfGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Semifinales · <span class="text-slate-500 font-normal">14 – 15 jul</span></h3>
-          <div id="sfGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
-          <div>
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-3">Tercer lugar · <span class="text-slate-500 font-normal">18 jul</span></h3>
-            <div id="thirdPlace"></div>
-          </div>
-          <div>
-            <h3 class="text-sm font-semibold uppercase tracking-wider text-amber-300 mb-3">Final · <span class="text-amber-200/60 font-normal">19 jul</span></h3>
-            <div id="finalMatch"></div>
-          </div>
-        </div>
+      <div class="mt-8 max-w-lg">
+        <h3 class="text-sm font-semibold uppercase tracking-wider text-orange-300 mb-3">Tercer lugar · <span class="text-slate-500 font-normal">18 jul · Hard Rock Stadium, Miami Gardens</span></h3>
+        <div id="thirdPlace"></div>
       </div>
     </section>
 
@@ -442,19 +458,50 @@
       `;
     }
 
-    function renderRound(containerId, matches, accent) {
-      const c = document.getElementById(containerId);
-      c.innerHTML = matches.map(m => renderMatchCard(m, { accent })).join("");
+    // Orden vertical de cada ronda para que el bracket fluya correctamente
+    // (descendiendo a través de la rama top: SF101 ← QF97+98, y la rama bottom: SF102 ← QF99+100)
+    const R32_ORDER = [74, 77, 73, 75, 83, 84, 81, 82, 76, 78, 79, 80, 86, 88, 85, 87];
+    const R16_ORDER = [89, 90, 93, 94, 91, 92, 95, 96];
+    const QF_ORDER  = [97, 98, 99, 100];
+    const SF_ORDER  = [101, 102];
+
+    function renderBracketCell(m, col, rowStart, rowSpan, accent, opts = {}) {
+      const hasNext = col < 5;
+      const isPairTop = opts.pairTop || false;
+      // Distancia entre el centro de pair-top y el centro de pair-bot = rowSpan * 52px
+      // (cada celda en la grid mide rowSpan * 52px de alto, y los pares son contiguos)
+      const connectorH = rowSpan * 52;
+      const cls = [
+        "bracket-cell",
+        hasNext ? "has-next" : "",
+        isPairTop ? "pair-top" : "",
+      ].filter(Boolean).join(" ");
+      const style = `grid-column:${col}; grid-row:${rowStart} / span ${rowSpan}; --connector-h:${connectorH}px;`;
+      return `<div class="${cls}" style="${style}">${renderMatchCard(m, { accent })}</div>`;
+    }
+
+    function renderBracket() {
+      const cells = [];
+      R32_ORDER.forEach((id, i) => {
+        cells.push(renderBracketCell(MATCH_BY_ID[id], 1, i * 2 + 1, 2, "sky", { pairTop: i % 2 === 0 }));
+      });
+      R16_ORDER.forEach((id, i) => {
+        cells.push(renderBracketCell(MATCH_BY_ID[id], 2, i * 4 + 1, 4, "indigo", { pairTop: i % 2 === 0 }));
+      });
+      QF_ORDER.forEach((id, i) => {
+        cells.push(renderBracketCell(MATCH_BY_ID[id], 3, i * 8 + 1, 8, "violet", { pairTop: i % 2 === 0 }));
+      });
+      SF_ORDER.forEach((id, i) => {
+        cells.push(renderBracketCell(MATCH_BY_ID[id], 4, i * 16 + 1, 16, "fuchsia", { pairTop: i % 2 === 0 }));
+      });
+      cells.push(renderBracketCell(FINAL, 5, 1, 32, "amber"));
+      document.getElementById("bracketGrid").innerHTML = cells.join("");
     }
 
     function renderAll() {
       renderGroups();
-      renderRound("r32Grid", R32, "sky");
-      renderRound("r16Grid", R16, "indigo");
-      renderRound("qfGrid", QF, "violet");
-      renderRound("sfGrid", SF, "fuchsia");
+      renderBracket();
       document.getElementById("thirdPlace").innerHTML = renderMatchCard(THIRD, { accent: "orange" });
-      document.getElementById("finalMatch").innerHTML = renderMatchCard(FINAL, { accent: "amber" });
       attachMatchHandlers();
       attachThirdPickHandlers();
     }

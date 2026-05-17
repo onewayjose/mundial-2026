@@ -69,7 +69,7 @@
       left: calc(100% + 16px);
       top: 50%;
       width: 2px;
-      height: var(--connector-h, 160px);
+      height: var(--connector-h, 184px);
       background: rgb(51 65 85);
       pointer-events: none;
     }
@@ -120,7 +120,7 @@
           <div class="round-head"><div class="text-sm font-semibold uppercase tracking-wider text-amber-300">Final</div><div class="text-[10px] text-amber-200/60">19 jul · MetLife Stadium</div></div>
         </div>
 
-        <div id="bracketGrid" class="grid gap-x-4" style="grid-template-columns: repeat(5, minmax(220px, 1fr)); grid-template-rows: repeat(32, 80px); min-width: 1180px;"></div>
+        <div id="bracketGrid" class="grid gap-x-4" style="grid-template-columns: repeat(5, minmax(220px, 1fr)); grid-template-rows: repeat(32, 92px); min-width: 1180px;"></div>
       </div>
 
       <div class="mt-8 max-w-lg">
@@ -468,9 +468,9 @@
     function renderBracketCell(m, col, rowStart, rowSpan, accent, opts = {}) {
       const hasNext = col < 5;
       const isPairTop = opts.pairTop || false;
-      // Distancia entre el centro de pair-top y el centro de pair-bot = rowSpan * 80px
-      // (cada celda en la grid mide rowSpan * 80px de alto, y los pares son contiguos)
-      const connectorH = rowSpan * 80;
+      // Distancia entre el centro de pair-top y el centro de pair-bot = rowSpan * 92px
+      // (cada celda en la grid mide rowSpan * 92px de alto, y los pares son contiguos)
+      const connectorH = rowSpan * 92;
       const cls = [
         "bracket-cell",
         hasNext ? "has-next" : "",

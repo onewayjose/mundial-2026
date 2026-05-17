@@ -224,7 +224,7 @@
       { id: 74, date: "29 jun", city: "Foxborough",      stadium: "Gillette Stadium",      a: { pos: "1E" }, b: { thirdFrom: ["A","B","C","D","F"] } },
       { id: 75, date: "29 jun", city: "Guadalupe (Monterrey)", stadium: "Estadio BBVA",    a: { pos: "1F" }, b: { pos: "2C" } },
       { id: 76, date: "29 jun", city: "Houston",         stadium: "NRG Stadium",           a: { pos: "1C" }, b: { pos: "2F" } },
-      { id: 77, date: "30 jun", city: "East Rutherford", stadium: "MetLife Stadium",       a: { pos: "1I" }, b: { thirdFrom: ["C","D","F","G","H"] } },
+      { id: 77, date: "30 jun", city: "New Jersey", stadium: "MetLife Stadium",       a: { pos: "1I" }, b: { thirdFrom: ["C","D","F","G","H"] } },
       { id: 78, date: "30 jun", city: "Arlington",       stadium: "AT&T Stadium",          a: { pos: "2E" }, b: { pos: "2I" } },
       { id: 79, date: "30 jun", city: "Ciudad de México",stadium: "Estadio Azteca",        a: { pos: "1A" }, b: { thirdFrom: ["C","E","F","H","I"] } },
       { id: 80, date: "1 jul",  city: "Atlanta",         stadium: "Mercedes-Benz Stadium", a: { pos: "1L" }, b: { thirdFrom: ["E","H","I","J","K"] } },
@@ -242,7 +242,7 @@
     const R16 = [
       { id: 89, date: "4 jul", city: "Philadelphia",   stadium: "Lincoln Financial Field", a: { winnerOf: 74 }, b: { winnerOf: 77 } },
       { id: 90, date: "4 jul", city: "Houston",        stadium: "NRG Stadium",             a: { winnerOf: 73 }, b: { winnerOf: 75 } },
-      { id: 91, date: "5 jul", city: "East Rutherford",stadium: "MetLife Stadium",         a: { winnerOf: 76 }, b: { winnerOf: 78 } },
+      { id: 91, date: "5 jul", city: "New Jersey",stadium: "MetLife Stadium",         a: { winnerOf: 76 }, b: { winnerOf: 78 } },
       { id: 92, date: "5 jul", city: "Ciudad de México",stadium: "Estadio Azteca",         a: { winnerOf: 79 }, b: { winnerOf: 80 } },
       { id: 93, date: "6 jul", city: "Arlington",      stadium: "AT&T Stadium",            a: { winnerOf: 83 }, b: { winnerOf: 84 } },
       { id: 94, date: "6 jul", city: "Seattle",        stadium: "Lumen Field",             a: { winnerOf: 81 }, b: { winnerOf: 82 } },
@@ -265,7 +265,7 @@
     ];
 
     const THIRD = { id: 103, date: "18 jul", city: "Miami Gardens",   stadium: "Hard Rock Stadium",  a: { loserOf: 101 }, b: { loserOf: 102 } };
-    const FINAL = { id: 104, date: "19 jul", city: "East Rutherford", stadium: "MetLife Stadium",    a: { winnerOf: 101 }, b: { winnerOf: 102 } };
+    const FINAL = { id: 104, date: "19 jul", city: "New Jersey", stadium: "MetLife Stadium",    a: { winnerOf: 101 }, b: { winnerOf: 102 } };
 
     const ALL_MATCHES = [...R32, ...R16, ...QF, ...SF, THIRD, FINAL];
     const MATCH_BY_ID = Object.fromEntries(ALL_MATCHES.map(m => [m.id, m]));
@@ -583,7 +583,7 @@
       }
       const a = resolveSlot(FINAL.a, FINAL.id);
       const b = resolveSlot(FINAL.b, FINAL.id);
-      if (a && b) lines.push(`Final: ${TEAMS[a].name} vs ${TEAMS[b].name} (East Rutherford, 19 jul)`);
+      if (a && b) lines.push(`Final: ${TEAMS[a].name} vs ${TEAMS[b].name} (New Jersey, 19 jul)`);
       const third = state.winners[THIRD.id];
       if (third) lines.push(`3.er lugar: ${TEAMS[third].flag} ${TEAMS[third].name}`);
       const text = lines.join("\n");
